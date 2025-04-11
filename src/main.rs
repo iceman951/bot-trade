@@ -1,16 +1,15 @@
-use csv::Reader;
+use polars::prelude::*;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn read_csv(file_path: &str) -> PolarsResult<DataFrame> {
+    CsvReadOptions::default()
+            .with_has_header(true)
+            .try_into_reader_with_file_path(Some(file_path.into()))?
+            .finish()
+}
+
+fn main() {
     let file_path = "./assets/BTC-Daily.csv";
+    let df = read_csv(&file_path).unwrap();
+    println!("{:?}", df);
 
-    let mut rdr = Reader::from_path(file_path)?;
-
-    // Process the CSV data
-    for result in rdr.records() {
-        let record = result?;
-        // Process each record here
-        println!("{:?}", record);
-    }
-    
-    Ok(())
 }
